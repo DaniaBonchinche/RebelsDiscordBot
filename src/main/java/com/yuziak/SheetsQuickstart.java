@@ -1,4 +1,5 @@
 package com.yuziak;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -11,6 +12,9 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest;
+import com.google.api.services.sheets.v4.model.BatchUpdateValuesResponse;
+import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.FileNotFoundException;
@@ -18,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,11 +36,12 @@ public class SheetsQuickstart {
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
+    private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
     /**
      * Creates an authorized Credential object.
+     *
      * @param HTTP_TRANSPORT The network HTTP Transport.
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
@@ -61,11 +68,23 @@ public class SheetsQuickstart {
      * Prints the names and majors of students in a sample spreadsheet:
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
      */
-    public static void main(String... args) throws IOException, GeneralSecurityException {
+    public static void main(String... args) {
+        try {
+            updateMember("Yuzless", 305, 380, "Guardian");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void updateMember(String name, int ap, int def, String gameClass) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        final String spreadsheetId = "1a0tQAW2Q-X8OACix8dJEKR3BugAosYyUAlRi9a_LDrA";
-        final String range = "Sheet1!A1:E";
+        final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
+
+        final String range = "Восставшие!A2:J";
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
@@ -73,14 +92,34 @@ public class SheetsQuickstart {
                 .get(spreadsheetId, range)
                 .execute();
         List<List<Object>> values = response.getValues();
+        int userPos = Integer.MAX_VALUE;
+        int tempPos = 2;
         if (values == null || values.isEmpty()) {
             System.out.println("No data found.");
         } else {
-            System.out.println("Name, Major");
             for (List row : values) {
-                // Print columns A and E, which correspond to indices 0 and 4.
-                System.out.printf("%s, %s\n", row.get(0), row.get(4));
+                if (row.get(0).toString().equals(name)) {
+                    userPos = tempPos;
+                } else {
+                    tempPos++;
+                }
             }
+        }
+        if (userPos == Integer.MAX_VALUE) {
+            System.out.println("User not found");
+        } else {
+            System.out.println(userPos);
+
+            List<List<Object>> val = Arrays.asList(
+                    Arrays.asList(name, gameClass, ap, def)
+            );
+            ValueRange body = new ValueRange()
+                    .setValues(val);
+
+            UpdateValuesResponse result =
+                    service.spreadsheets().values().update(spreadsheetId, "A" + userPos, body)
+                            .setValueInputOption("USER_ENTERED")
+                            .execute();
         }
     }
 }
