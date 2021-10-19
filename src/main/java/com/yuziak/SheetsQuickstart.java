@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class SheetsQuickstart {
     private static final String APPLICATION_NAME = "RebelsDisBot";
@@ -70,7 +68,7 @@ public class SheetsQuickstart {
      */
     public static void main(String... args) {
         try {
-            updateMember("Yuzless", 305, 380, "Guardian");
+            updateMember("Yuzless", "Guardian", 305, 380, 370, null, null, null, null);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (GeneralSecurityException e) {
@@ -78,13 +76,11 @@ public class SheetsQuickstart {
         }
     }
 
-
-    public static void updateMember(String name, int ap, int def, String gameClass) throws IOException, GeneralSecurityException {
-        // Build a new authorized API client service.
+    public static int getUserPos(String name) throws IOException, GeneralSecurityException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
 
-        final String range = "Восставшие!A2:J";
+        final String range = "Восставшие!A2:K";
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
@@ -95,7 +91,7 @@ public class SheetsQuickstart {
         int userPos = Integer.MAX_VALUE;
         int tempPos = 2;
         if (values == null || values.isEmpty()) {
-            System.out.println("No data found.");
+            return 0;
         } else {
             for (List row : values) {
                 if (row.get(0).toString().equals(name)) {
@@ -106,20 +102,56 @@ public class SheetsQuickstart {
             }
         }
         if (userPos == Integer.MAX_VALUE) {
-            System.out.println("User not found");
+            return 0;
+        } else {
+            return userPos;
+        }
+    }
+
+    public static String updateMember(String name, String gameClass, Integer ap, Integer def, Integer accuracy, String role, Integer horseDef, String ckrockType, String horseType) throws IOException, GeneralSecurityException {
+        String pattern = "dd.MM.yyyy";
+        String updateDate = new SimpleDateFormat(pattern).format(new Date());
+
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
+
+        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+        int userPos = getUserPos(name);
+        if (userPos == 0) {
+            return ("User not found");
         } else {
             System.out.println(userPos);
-
             List<List<Object>> val = Arrays.asList(
-                    Arrays.asList(name, gameClass, ap, def)
+                    Arrays.asList(name, gameClass, ap, def, role, updateDate, horseDef, horseType, accuracy)
             );
-            ValueRange body = new ValueRange()
+            ValueRange body9 = new ValueRange()
                     .setValues(val);
-
-            UpdateValuesResponse result =
-                    service.spreadsheets().values().update(spreadsheetId, "A" + userPos, body)
+            UpdateValuesResponse result12 =
+                    service.spreadsheets().values().update(spreadsheetId, "A" + userPos, body9)
                             .setValueInputOption("USER_ENTERED")
                             .execute();
+
+            List<ValueRange> data = new ArrayList<>();
+            data.add(new ValueRange().setRange("A" + userPos).setValues(Arrays.asList(Arrays.asList(name))));
+            data.add(new ValueRange().setRange("B" + userPos).setValues(Arrays.asList(Arrays.asList(gameClass))));
+            data.add(new ValueRange().setRange("C" + userPos).setValues(Arrays.asList(Arrays.asList(ap))));
+            data.add(new ValueRange().setRange("D" + userPos).setValues(Arrays.asList(Arrays.asList(def))));
+            data.add(new ValueRange().setRange("F" + userPos).setValues(Arrays.asList(Arrays.asList(role))));
+            data.add(new ValueRange().setRange("G" + userPos).setValues(Arrays.asList(Arrays.asList(updateDate))));
+            data.add(new ValueRange().setRange("H" + userPos).setValues(Arrays.asList(Arrays.asList(horseDef))));
+            data.add(new ValueRange().setRange("I" + userPos).setValues(Arrays.asList(Arrays.asList(ckrockType))));
+            data.add(new ValueRange().setRange("J" + userPos).setValues(Arrays.asList(Arrays.asList(horseType))));
+            data.add(new ValueRange().setRange("K" + userPos).setValues(Arrays.asList(Arrays.asList(accuracy))));
+
+            BatchUpdateValuesRequest body = new BatchUpdateValuesRequest()
+                    .setValueInputOption("USER_ENTERED")
+                    .setData(data);
+            BatchUpdateValuesResponse result =
+                    service.spreadsheets().values().batchUpdate(spreadsheetId, body).execute();
+            System.out.printf("%d cells updated.", result.getTotalUpdatedCells());
+            return ("Successful update");
         }
     }
 }
