@@ -2,12 +2,13 @@ package com.yuziak;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 
 public class Bot {
     public static void main(String[] args) throws Exception {
-        final JDA bot = JDABuilder.createDefault("OTAwMDM5MTQ0OTQ2OTI5NzI0.YW7gxg.zjq_HHKPWszq7CJZWTVXb42p1pI")
+        final JDA bot = JDABuilder.createDefault("")
                 .build();
-
-        bot.addEventListener(new BotEventListener());
+        bot.getPresence().setActivity(Activity.watching("Anime"));
+        bot.addEventListener(new BotEventUpdateGear());
     }
 }

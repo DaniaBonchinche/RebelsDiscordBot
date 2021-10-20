@@ -68,7 +68,7 @@ public class SheetsQuickstart {
      */
     public static void main(String... args) {
         try {
-            updateMember("Yuzless", "Guardian", 305, 380, 370, null, null, null, null);
+            updateMember("Yuzless", "Guardian", 305, 380, 370, null, null, null);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (GeneralSecurityException e) {
@@ -108,7 +108,7 @@ public class SheetsQuickstart {
         }
     }
 
-    public static String updateMember(String name, String gameClass, Integer ap, Integer def, Integer accuracy, String role, Integer horseDef, String ckrockType, String horseType) throws IOException, GeneralSecurityException {
+    public static String updateMember(String name, String gameClass, Integer ap, Integer def, Integer accuracy, Integer horseDef, String ckrockType, String horseType) throws IOException, GeneralSecurityException {
         String pattern = "dd.MM.yyyy";
         String updateDate = new SimpleDateFormat(pattern).format(new Date());
 
@@ -122,29 +122,40 @@ public class SheetsQuickstart {
         if (userPos == 0) {
             return ("User not found");
         } else {
-            System.out.println(userPos);
-            List<List<Object>> val = Arrays.asList(
-                    Arrays.asList(name, gameClass, ap, def, role, updateDate, horseDef, horseType, accuracy)
-            );
-            ValueRange body9 = new ValueRange()
-                    .setValues(val);
-            UpdateValuesResponse result12 =
-                    service.spreadsheets().values().update(spreadsheetId, "A" + userPos, body9)
-                            .setValueInputOption("USER_ENTERED")
-                            .execute();
-
             List<ValueRange> data = new ArrayList<>();
             data.add(new ValueRange().setRange("A" + userPos).setValues(Arrays.asList(Arrays.asList(name))));
             data.add(new ValueRange().setRange("B" + userPos).setValues(Arrays.asList(Arrays.asList(gameClass))));
+            try {
+                if (ap <= 100 || ap > 330) {
+                    return "ApNull";
+                }
+            } catch (NullPointerException e) {
+            }
             data.add(new ValueRange().setRange("C" + userPos).setValues(Arrays.asList(Arrays.asList(ap))));
+            try {
+                if (def <= 100 || def > 600) {
+                    return "DefNull";
+                }
+            } catch (NullPointerException e) {
+            }
             data.add(new ValueRange().setRange("D" + userPos).setValues(Arrays.asList(Arrays.asList(def))));
-            data.add(new ValueRange().setRange("F" + userPos).setValues(Arrays.asList(Arrays.asList(role))));
             data.add(new ValueRange().setRange("G" + userPos).setValues(Arrays.asList(Arrays.asList(updateDate))));
+            try {
+                if (horseDef <= 0 || horseDef > 250) {
+                    return "HorseDefNull";
+                }
+            } catch (NullPointerException e) {
+            }
             data.add(new ValueRange().setRange("H" + userPos).setValues(Arrays.asList(Arrays.asList(horseDef))));
             data.add(new ValueRange().setRange("I" + userPos).setValues(Arrays.asList(Arrays.asList(ckrockType))));
             data.add(new ValueRange().setRange("J" + userPos).setValues(Arrays.asList(Arrays.asList(horseType))));
+            try {
+                if (accuracy <= 250 || accuracy > 500) {
+                    return "AccuracyNull";
+                }
+            } catch (NullPointerException e) {
+            }
             data.add(new ValueRange().setRange("K" + userPos).setValues(Arrays.asList(Arrays.asList(accuracy))));
-
             BatchUpdateValuesRequest body = new BatchUpdateValuesRequest()
                     .setValueInputOption("USER_ENTERED")
                     .setData(data);
