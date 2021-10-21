@@ -1,9 +1,6 @@
 package com.yuziak;
 
-import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +11,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class BotEventUpdateGear extends ListenerAdapter {
-    String CHANNEL_NAME = "основной";
+    String CHANNEL_NAME = "боттест";
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -90,10 +87,10 @@ public class BotEventUpdateGear extends ListenerAdapter {
 
 
     public static String updateValidator(String name, String gameClass, Integer ap, Integer def, Integer accuracy, Integer horseDef, String ckrockType, String horseType) throws IOException, GeneralSecurityException {
-        String[] classesPool = {"Воин", "Валькирия", "Волшебник", "Волшебница", "Страйкер", "Фурия", "Лучница", "Лучник", "Моева", "Ронин",
-                "Лан", "Хассашин", "ДК", "Сорка", "Куноичи", "Ниндзя", "Мистик", "Варвар", "Нова", "Страж", "Шай", "Кубик", "Корсар", null};
-        String[] horseTypePool = {"Рысак", "8 ранг", "Единорог", "Дум", "Пегас", "10 ранг", null};
-        String[] ckrockTypePool = {"Ветер", "Земля", "Море", null};
+        String[] classesPool = {"Воин", "Валькирия", "Волшебник", "Волшебница", "Страйкер", "Фурия", "Лучница", "Лучник", "Моева", "Ронин","Лан",
+                "Хассашин", "Тёмный рыцарь", "Сорка", "Куноичи", "Ниндзя", "Мистик", "Варвар", "Нова", "Страж", "Шай", "Мудрец", "Рыба", null};
+        String[] horseTypePool = {"8", "Единорог", "Дум", "Пегас", "Грёз", null};
+        String[] ckrockTypePool = {"Ветер", "Земля", "Море","-", null};
 
         if (gameClass.equals("1999999999")) {
             gameClass = null;

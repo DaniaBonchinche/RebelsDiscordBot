@@ -66,21 +66,13 @@ public class SheetsQuickstart {
      * Prints the names and majors of students in a sample spreadsheet:
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
      */
-    public static void main(String... args) {
-        try {
-            updateMember("Yuzless", "Guardian", 305, 380, 370, null, null, null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-    }
 
+    final static public String sheetRange="BotTest!";
     public static int getUserPos(String name) throws IOException, GeneralSecurityException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
 
-        final String range = "Восставшие!A2:K";
+        final String range = sheetRange+"B2:K";
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
@@ -109,7 +101,7 @@ public class SheetsQuickstart {
     }
 
     public static String updateMember(String name, String gameClass, Integer ap, Integer def, Integer accuracy, Integer horseDef, String ckrockType, String horseType) throws IOException, GeneralSecurityException {
-        String pattern = "dd.MM.yyyy";
+        String pattern = "dd.MM.yyyy hh:mm:ss";
         String updateDate = new SimpleDateFormat(pattern).format(new Date());
 
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -123,44 +115,45 @@ public class SheetsQuickstart {
             return ("User not found");
         } else {
             List<ValueRange> data = new ArrayList<>();
-            data.add(new ValueRange().setRange("A" + userPos).setValues(Arrays.asList(Arrays.asList(name))));
-            data.add(new ValueRange().setRange("B" + userPos).setValues(Arrays.asList(Arrays.asList(gameClass))));
+            data.add(new ValueRange().setRange(sheetRange+"B" + userPos).setValues(Arrays.asList(Arrays.asList(name))));
+            data.add(new ValueRange().setRange(sheetRange+"C" + userPos).setValues(Arrays.asList(Arrays.asList(gameClass))));
             try {
                 if (ap <= 100 || ap > 330) {
                     return "ApNull";
                 }
             } catch (NullPointerException e) {
             }
-            data.add(new ValueRange().setRange("C" + userPos).setValues(Arrays.asList(Arrays.asList(ap))));
+            data.add(new ValueRange().setRange(sheetRange+"D" + userPos).setValues(Arrays.asList(Arrays.asList(ap))));
             try {
                 if (def <= 100 || def > 600) {
                     return "DefNull";
                 }
             } catch (NullPointerException e) {
             }
-            data.add(new ValueRange().setRange("D" + userPos).setValues(Arrays.asList(Arrays.asList(def))));
-            data.add(new ValueRange().setRange("G" + userPos).setValues(Arrays.asList(Arrays.asList(updateDate))));
+            data.add(new ValueRange().setRange(sheetRange+"F" + userPos).setValues(Arrays.asList(Arrays.asList(def))));
+            data.add(new ValueRange().setRange(sheetRange+"A" + userPos).setValues(Arrays.asList(Arrays.asList(updateDate))));
             try {
                 if (horseDef <= 0 || horseDef > 250) {
                     return "HorseDefNull";
                 }
             } catch (NullPointerException e) {
             }
-            data.add(new ValueRange().setRange("H" + userPos).setValues(Arrays.asList(Arrays.asList(horseDef))));
-            data.add(new ValueRange().setRange("I" + userPos).setValues(Arrays.asList(Arrays.asList(ckrockType))));
-            data.add(new ValueRange().setRange("J" + userPos).setValues(Arrays.asList(Arrays.asList(horseType))));
+            data.add(new ValueRange().setRange(sheetRange+"H" + userPos).setValues(Arrays.asList(Arrays.asList(horseDef))));
+            data.add(new ValueRange().setRange(sheetRange+"I" + userPos).setValues(Arrays.asList(Arrays.asList(ckrockType))));
+            data.add(new ValueRange().setRange(sheetRange+"J" + userPos).setValues(Arrays.asList(Arrays.asList(horseType))));
             try {
                 if (accuracy <= 250 || accuracy > 500) {
                     return "AccuracyNull";
                 }
             } catch (NullPointerException e) {
             }
-            data.add(new ValueRange().setRange("K" + userPos).setValues(Arrays.asList(Arrays.asList(accuracy))));
+            data.add(new ValueRange().setRange(sheetRange+"E" + userPos).setValues(Arrays.asList(Arrays.asList(accuracy))));
             BatchUpdateValuesRequest body = new BatchUpdateValuesRequest()
-                    .setValueInputOption("USER_ENTERED")
+                    .setValueInputOption("RAW")
                     .setData(data);
             BatchUpdateValuesResponse result =
                     service.spreadsheets().values().batchUpdate(spreadsheetId, body).execute();
+            System.out.println(userPos);
             System.out.printf("%d cells updated.", result.getTotalUpdatedCells());
             return ("Successful update");
         }
