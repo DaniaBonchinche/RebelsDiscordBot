@@ -68,8 +68,8 @@ public class SheetsQuickstart {
 
     public static String updateMember(String name, String gameClass, Integer ap, Integer def, Integer accuracy, Integer horseDef, String ckrockType, String horseType) throws IOException, GeneralSecurityException {
         String pattern = "dd.MM.yyyy hh:mm:ss";
-        LocalDateTime curTime = LocalDateTime.now(ZoneId.of("Europe/Moscow")).plusMinutes(15);
-        String updateDate = curTime.format(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
+        LocalDateTime curTime = LocalDateTime.now(ZoneId.of("Europe/Moscow"));
+        String updateDate = curTime.format(DateTimeFormatter.ofPattern(pattern));
 
         final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
 
