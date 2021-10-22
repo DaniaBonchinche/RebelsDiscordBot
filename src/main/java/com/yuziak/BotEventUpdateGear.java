@@ -40,14 +40,14 @@ public class BotEventUpdateGear extends ListenerAdapter {
                             e.printStackTrace();
                         }
                     } catch (NumberFormatException e) {
-                        event.getMessage().reply("Непонял (ты что-то с порядком напутал)").timeout(3, TimeUnit.SECONDS).submit();
+                        event.getMessage().reply("Непонял (ты что-то с порядком напутал)").timeout(1, TimeUnit.SECONDS).submit();
                     }
 
                 } else {
-                    event.getMessage().reply("Непонял").timeout(3, TimeUnit.SECONDS).submit();
+                    event.getMessage().reply("Непонял").timeout(1, TimeUnit.SECONDS).submit();
                 }
             } else {
-                event.getMessage().reply("Непонял").timeout(3, TimeUnit.SECONDS).submit();
+                event.getMessage().reply("Непонял").timeout(1, TimeUnit.SECONDS).submit();
             }
         }
     }
@@ -55,31 +55,31 @@ public class BotEventUpdateGear extends ListenerAdapter {
     public static void answer(String kek, Message message) {
         switch (kek) {
             case "User not found":
-                message.reply("Дружек, такой фамилии нет в таблице :__~1:").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply("Дружек, такой фамилии нет в таблице :__~1:").timeout(1, TimeUnit.SECONDS).submit();
                 break;
             case "ClassNull":
-                message.reply("Не верно написан класс").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply("Не верно написан класс").timeout(1, TimeUnit.SECONDS).submit();
                 break;
             case "ApNull":
-                message.reply("Что-то не так с атакой").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply("Что-то не так с атакой").timeout(1, TimeUnit.SECONDS).submit();
                 break;
             case "DefNull":
-                message.reply("Что-то не так с дефом").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply("Что-то не так с дефом").timeout(1, TimeUnit.SECONDS).submit();
                 break;
             case "AccuracyNull":
-                message.reply("Что-то не так с меткой").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply("Что-то не так с меткой").timeout(1, TimeUnit.SECONDS).submit();
                 break;
             case "HorseTypeNull":
-                message.reply("Неправильная лошадь").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply("Неправильная лошадь").timeout(1, TimeUnit.SECONDS).submit();
                 break;
             case "CkrockTypeNull":
-                message.reply("Не правильный крогдаллор").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply("Не правильный крогдаллор").timeout(1, TimeUnit.SECONDS).submit();
                 break;
             case "HorseDefNull":
-                message.reply("Что-то не так с дефом лошадки").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply("Что-то не так с дефом лошадки").timeout(1, TimeUnit.SECONDS).submit();
                 break;
             case "Successful update":
-                message.reply(":thumbsup:").timeout(3, TimeUnit.SECONDS).submit();
+                message.reply(":thumbsup:").timeout(1, TimeUnit.SECONDS).submit();
                 break;
         }
 
