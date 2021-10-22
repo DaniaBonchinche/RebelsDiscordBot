@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class Bot {
+public class App {
     public static void main(String[] args) throws Exception {
         final JDA bot = JDABuilder.createDefault("")
                 .build();
