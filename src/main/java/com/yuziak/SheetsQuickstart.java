@@ -12,6 +12,9 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class SheetsQuickstart {
@@ -65,7 +68,8 @@ public class SheetsQuickstart {
 
     public static String updateMember(String name, String gameClass, Integer ap, Integer def, Integer accuracy, Integer horseDef, String ckrockType, String horseType) throws IOException, GeneralSecurityException {
         String pattern = "dd.MM.yyyy hh:mm:ss";
-        String updateDate = new SimpleDateFormat(pattern).format(new Date());
+        LocalDateTime curTime = LocalDateTime.now(ZoneId.of("Europe/Moscow")).plusMinutes(15);
+        String updateDate = curTime.format(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
 
         final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
 
