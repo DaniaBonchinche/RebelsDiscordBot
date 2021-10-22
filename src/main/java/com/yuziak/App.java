@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        final JDA bot = JDABuilder.createDefault("OTAwMDM5MTQ0OTQ2OTI5NzI0.YW7gxg.QzAfH5OMm8JkwBZ-FgNAgJ_VLCk")
+        final JDA bot = JDABuilder.createDefault("")
                 .build();
         bot.getPresence().setActivity(Activity.watching("Anime"));
         bot.addEventListener(new BotEventUpdateGear());
