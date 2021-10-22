@@ -10,12 +10,13 @@ public class BotEventDeleteGarbage extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if(event.getMessage().getAuthor().isBot()&&event.getChannel().getName().equals("напоминалка")){
+        if(event.getMessage().getAuthor().isBot()&&(event.getChannel().getName().equals("боссы")||event.getChannel().getName().equals("сонилы"))){
             event.getMessage().delete().queueAfter(15, TimeUnit.MINUTES);
         }
 
         if(event.getChannel().getName().equals("боттест")){
             event.getMessage().delete().queueAfter(15, TimeUnit.MINUTES);
         }
+
     }
 }

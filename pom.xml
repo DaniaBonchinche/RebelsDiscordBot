@@ -13,7 +13,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.8.1</version><configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+            </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -25,7 +28,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ru.func.bot42.Main</mainClass>
+                            <mainClass>com.yuziak.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -85,8 +88,8 @@
         </repository>
     </repositories>
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
 </project>

@@ -15,13 +15,14 @@ import java.util.concurrent.TimeUnit;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        final JDA bot = JDABuilder.createDefault("")
+        final JDA bot = JDABuilder.createDefault("OTAwMDM5MTQ0OTQ2OTI5NzI0.YW7gxg.QzAfH5OMm8JkwBZ-FgNAgJ_VLCk")
                 .build();
         bot.getPresence().setActivity(Activity.watching("Anime"));
         bot.addEventListener(new BotEventUpdateGear());
         bot.addEventListener(new BotEventDeleteGarbage());
         bot.awaitReady();
-        List<TextChannel> channels = bot.getTextChannelsByName("напоминалка",true);
+        TextChannel channelВoss = bot.getTextChannelsByName("боссы", true).get(0);
+        TextChannel channelSonil = bot.getTextChannelsByName("сонилы", true).get(0);
 
         //noinspection InfiniteLoopStatement
         while (true) {
@@ -31,15 +32,15 @@ public class App {
                 String timePattern = "HH:mm:ss";
                 String time = LocalDateTime.now(ZoneId.of("Europe/Moscow")).format(DateTimeFormatter.ofPattern(timePattern));
                 if (time.equals("19:00:00") || time.equals("01:00:00")) {
-                    channels.get(0).sendMessage("@here Друг, забери своих сонилов").submit();
+                    channelSonil.sendMessage("@here Друг, забери своих сонилов").submit();
                 }
+                LocalDateTime curTime = LocalDateTime.now(ZoneId.of("Europe/Moscow")).plusMinutes(15);
+                String check = curTime.format(DateTimeFormatter.ofPattern("EEEE HH:mm:ss", Locale.ENGLISH));
                 Schedule.schedule.forEach((k, v) -> {
                     for (String date : v) {
-                        LocalDateTime curTime = LocalDateTime.now(ZoneId.of("Europe/Moscow")).plusMinutes(15);
-                        String check = curTime.format(DateTimeFormatter.ofPattern("EEEE HH:mm:ss", Locale.ENGLISH));
                         if (check.equals(date)) {
-                            channels.get(0).sendMessage("@here "+k + " рес через 15 минут").submit();
-                            channels.get(0).sendMessage("@here "+k + " реснулся").queueAfter(15, TimeUnit.MINUTES );
+                            channelВoss.sendMessage("@here " + k + " рес через 15 минут").submit();
+                            channelВoss.sendMessage("@here " + k + " реснулся").queueAfter(15, TimeUnit.MINUTES);
                         }
                     }
                 });

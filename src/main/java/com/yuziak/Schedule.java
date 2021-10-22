@@ -22,6 +22,6 @@ public class Schedule {
         schedule.put("Камос", new String[]{"Thursday 23:00:00", "Sunday 00:00:00", "Sunday 12:00:00"});
         schedule.put("Велл", new String[]{"Wednesday 23:00:00", "Sunday 16:00:00"});
         schedule.put("Биба и Боба", new String[]{"Tuesday 23:00:00", "Saturday 14:00:00"});
-        schedule.put("Офин", new String[]{"Wednesday 18:00:00", "Friday 23:00:00", "Sunday 23:00:00"});
+        schedule.put("Офин", new String[]{"Wednesday 18:00:00", "Friday 15:19:00", "Sunday 23:00:00"});
     }
 }
