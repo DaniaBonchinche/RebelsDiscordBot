@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,12 +23,12 @@ public class App {
 
         String token = "";
 
-
-        final JDA bot = JDABuilder.createDefault(token).build();
+        final JDA bot = JDABuilder.createDefault(token).enableIntents(GatewayIntent.GUILD_MEMBERS).build();
         bot.getPresence().setActivity(Activity.watching("Anime"));
         bot.addEventListener(new BotEventUpdateGear());
         bot.addEventListener(new BotEventDeleteGarbage());
         bot.addEventListener(new BotEventRoleProvider());
+        bot.addEventListener(new BotEventNewUser());
 
         bot.awaitReady();
         TextChannel channelToRemind = bot.getTextChannelsByName(bossChanelName, true).get(0);
@@ -40,7 +41,7 @@ public class App {
                 String timePattern = "HH:mm:ss";
                 String time = LocalDateTime.now(ZoneId.of("Europe/Moscow")).format(DateTimeFormatter.ofPattern(timePattern));
                 if (time.equals("19:00:00") || time.equals("01:30:00")) {
-                    channelToRemind.sendMessage("<@&"+sonil.getId()+"> Друг, забери своих сонилов").submit();
+                    channelToRemind.sendMessage("<@&" + sonil.getId() + "> Друг, забери своих сонилов").submit();
                 }
 
                 LocalDateTime curTime = LocalDateTime.now(ZoneId.of("Europe/Moscow")).plusMinutes(15);
@@ -49,9 +50,9 @@ public class App {
                 Schedule.schedule.forEach((k, v) -> {
                     for (String date : v) {
                         if (checkBefore15.equals(date)) {
-                            channelToRemind.sendMessage("<@&"+boss.getId()+"> " + k + " рес через 15 минут").mention(boss).submit();
+                            channelToRemind.sendMessage("<@&" + boss.getId() + "> " + k + " рес через 15 минут").mention(boss).submit();
                         } else if (check.equals(date)) {
-                            channelToRemind.sendMessage("<@&"+boss.getId()+"> " + k + " реснулся").mention(boss).submit();
+                            channelToRemind.sendMessage("<@&" + boss.getId() + "> " + k + " реснулся").mention(boss).submit();
                         }
                     }
                 });
