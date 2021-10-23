@@ -19,7 +19,7 @@ public class BotEventUpdateGear extends ListenerAdapter {
         if (event.getChannel().getName().equals(CHANNEL_NAME) && !event.getMessage().getAuthor().isBot()) {
             String message = event.getMessage().getContentDisplay();
             if (message.length() > 9) {
-                if (message.substring(0, 7).equals("!update") && message.split(" ").length == 9) {
+                if (message.startsWith("!update") && message.split(" ").length == 9) {
                     String[] data = message.substring(8).split(", ");
                     for (int i = 0; i < data.length; i++) {
                         if (data[i].equals("")) {
@@ -34,9 +34,7 @@ public class BotEventUpdateGear extends ListenerAdapter {
                         try {
                             answer(updateValidator(data[0], data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3])
                                     , Integer.parseInt(data[4]), Integer.parseInt(data[5]), data[6], data[7]), event.getMessage());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (GeneralSecurityException e) {
+                        } catch (IOException | GeneralSecurityException e) {
                             e.printStackTrace();
                         }
                     } catch (NumberFormatException e) {

@@ -11,7 +11,6 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +21,9 @@ public class SheetsQuickstart {
 
     private static final String CREDENTIALS_FILE_PATH_SERV_ACC = "/serviceAccount.json";
 
-    final static public String sheetRange = "BotTest!";
+    private static final String sheetName = "BotTest!";
+
+    private static final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
 
     private static Set<String> googleOAuth2Scopes() {
         Set<String> googleOAuth2Scopes = new HashSet<>();
@@ -32,20 +33,23 @@ public class SheetsQuickstart {
 
     private static Sheets getSheets() throws IOException, GeneralSecurityException {
         InputStream in = SheetsQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH_SERV_ACC);
-        return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), GoogleCredential.fromStream(in).createScoped(googleOAuth2Scopes()))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
+        if (in != null) {
+            return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), GoogleCredential.fromStream(in).createScoped(googleOAuth2Scopes()))
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        }else throw new NullPointerException("File don`t exist");
     }
 
     public static int getUserPos(String name) throws IOException, GeneralSecurityException {
-        final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
+        final String range = sheetName + "B2:K";
 
-        final String range = sheetRange + "B2:K";
         Sheets service = getSheets();
         ValueRange response = service.spreadsheets().values()
                 .get(spreadsheetId, range)
                 .execute();
+
         List<List<Object>> values = response.getValues();
+
         int userPos = Integer.MAX_VALUE;
         int tempPos = 2;
         if (values == null || values.isEmpty()) {
@@ -71,55 +75,57 @@ public class SheetsQuickstart {
         LocalDateTime curTime = LocalDateTime.now(ZoneId.of("Europe/Moscow"));
         String updateDate = curTime.format(DateTimeFormatter.ofPattern(pattern));
 
-        final String spreadsheetId = "1iy1WQleEMfo_GRXpwrEzf_RtWcxFrvE-p0AKUU1IsRY";
-
         Sheets service = getSheets();
         int userPos = getUserPos(name);
+
         if (userPos == 0) {
             return ("User not found");
         } else {
             List<ValueRange> data = new ArrayList<>();
-            data.add(new ValueRange().setRange(sheetRange + "B" + userPos).setValues(Arrays.asList(Arrays.asList(name))));
-            data.add(new ValueRange().setRange(sheetRange + "C" + userPos).setValues(Arrays.asList(Arrays.asList(gameClass))));
+            data.add(new ValueRange().setRange(sheetName + "B" + userPos).setValues(Collections.singletonList(Collections.singletonList(name))));
+            data.add(new ValueRange().setRange(sheetName + "C" + userPos).setValues(Collections.singletonList(Collections.singletonList(gameClass))));
             try {
                 if (ap <= 100 || ap > 330) {
                     return "ApNull";
                 }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException ignored) {
             }
-            data.add(new ValueRange().setRange(sheetRange + "D" + userPos).setValues(Arrays.asList(Arrays.asList(ap))));
+            data.add(new ValueRange().setRange(sheetName + "D" + userPos).setValues(Collections.singletonList(Collections.singletonList(ap))));
             try {
                 if (def <= 100 || def > 600) {
                     return "DefNull";
                 }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException ignored) {
             }
-            data.add(new ValueRange().setRange(sheetRange + "F" + userPos).setValues(Arrays.asList(Arrays.asList(def))));
-            data.add(new ValueRange().setRange(sheetRange + "A" + userPos).setValues(Arrays.asList(Arrays.asList(updateDate))));
+            data.add(new ValueRange().setRange(sheetName + "F" + userPos).setValues(Collections.singletonList(Collections.singletonList(def))));
+            data.add(new ValueRange().setRange(sheetName + "A" + userPos).setValues(Collections.singletonList(Collections.singletonList(updateDate))));
             try {
                 if (horseDef <= 0 || horseDef > 250) {
                     return "HorseDefNull";
                 }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException ignored) {
             }
-            data.add(new ValueRange().setRange(sheetRange + "H" + userPos).setValues(Arrays.asList(Arrays.asList(horseDef))));
-            data.add(new ValueRange().setRange(sheetRange + "I" + userPos).setValues(Arrays.asList(Arrays.asList(ckrockType))));
-            data.add(new ValueRange().setRange(sheetRange + "J" + userPos).setValues(Arrays.asList(Arrays.asList(horseType))));
+            data.add(new ValueRange().setRange(sheetName + "H" + userPos).setValues(Collections.singletonList(Collections.singletonList(horseDef))));
+            data.add(new ValueRange().setRange(sheetName + "I" + userPos).setValues(Collections.singletonList(Collections.singletonList(ckrockType))));
+            data.add(new ValueRange().setRange(sheetName + "J" + userPos).setValues(Collections.singletonList(Collections.singletonList(horseType))));
             try {
                 if (accuracy <= 250 || accuracy > 500) {
                     return "AccuracyNull";
                 }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException ignored) {
             }
-            data.add(new ValueRange().setRange(sheetRange + "E" + userPos).setValues(Arrays.asList(Arrays.asList(accuracy))));
+            data.add(new ValueRange().setRange(sheetName + "E" + userPos).setValues(Collections.singletonList(Collections.singletonList(accuracy))));
             BatchUpdateValuesRequest body = new BatchUpdateValuesRequest()
                     .setValueInputOption("RAW")
                     .setData(data);
             BatchUpdateValuesResponse result =
                     service.spreadsheets().values().batchUpdate(spreadsheetId, body).execute();
-            System.out.println(userPos);
+
+            System.out.println("User position "+userPos);
             System.out.printf("%d cells updated.", result.getTotalUpdatedCells());
+
             return ("Successful update");
+
         }
     }
 }
