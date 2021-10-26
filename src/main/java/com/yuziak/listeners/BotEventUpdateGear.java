@@ -1,5 +1,6 @@
-package com.yuziak;
+package com.yuziak.listeners;
 
+import com.yuziak.SheetApi;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -114,7 +115,7 @@ public class BotEventUpdateGear extends ListenerAdapter {
         if (Arrays.asList(classesPool).contains(gameClass)) {
             if (Arrays.asList(horseTypePool).contains(horseType)) {
                 if (Arrays.asList(ckrockTypePool).contains(ckrockType)) {
-                    return SheetsQuickstart.updateMember(name, gameClass, ap, def, accuracy, horseDef, ckrockType, horseType);
+                    return SheetApi.updateMember(name, gameClass, ap, def, accuracy, horseDef, ckrockType, horseType);
                 } else {
                     return "CkrockTypeNull";
                 }

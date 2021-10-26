@@ -2,7 +2,7 @@ package com.yuziak;
 
 import java.util.HashMap;
 
-public class Schedule {
+public class BossSchedule {
     public static HashMap<String, String[]> schedule = new HashMap<>();
     static {
         schedule.put("Кзарка", new String[]{"Monday 00:00:00", "Tuesday 00:00:00", "Tuesday 14:00:00",

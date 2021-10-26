@@ -16,7 +16,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class SheetsQuickstart {
+public class SheetApi {
     private static final String APPLICATION_NAME = "RebelsDisBot";
 
     private static final String CREDENTIALS_FILE_PATH_SERV_ACC = "/serviceAccount.json";
@@ -32,7 +32,7 @@ public class SheetsQuickstart {
     }
 
     private static Sheets getSheets() throws IOException, GeneralSecurityException {
-        InputStream in = SheetsQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH_SERV_ACC);
+        InputStream in = SheetApi.class.getResourceAsStream(CREDENTIALS_FILE_PATH_SERV_ACC);
         if (in != null) {
             return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), GoogleCredential.fromStream(in).createScoped(googleOAuth2Scopes()))
                     .setApplicationName(APPLICATION_NAME)

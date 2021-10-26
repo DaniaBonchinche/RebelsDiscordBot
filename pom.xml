@@ -91,6 +91,7 @@
     </dependencies>
 
     <repositories>
+
         <repository>
             <id>dv8tion</id>
             <name>m2-dv8tioт</name>

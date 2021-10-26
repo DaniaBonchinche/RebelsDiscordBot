@@ -1,5 +1,6 @@
 package com.yuziak;
 
+import com.yuziak.listeners.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -14,8 +15,18 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class App {
-    public static void main(String[] args) throws Exception {
+    private String testTime = "19:00:00";
 
+    public void setTestTime(String s) {
+        testTime = s;
+    }
+
+    public String getTestTime() {
+        return testTime;
+    }
+
+    public static void main(String[] args) throws Exception {
+        App newApp = new App();
         final String guildName = "ФПСеры";
         final String bossChanelName = "сонилы-боссы";
         final String bossRoleName = "Босс";
@@ -29,6 +40,7 @@ public class App {
         bot.addEventListener(new BotEventDeleteGarbage());
         bot.addEventListener(new BotEventRoleProvider());
         bot.addEventListener(new BotEventNewUser());
+        bot.addEventListener(new CommandListener(newApp));
 
         bot.awaitReady();
         TextChannel channelToRemind = bot.getTextChannelsByName(bossChanelName, true).get(0);
@@ -40,14 +52,14 @@ public class App {
 
                 String timePattern = "HH:mm:ss";
                 String time = LocalDateTime.now(ZoneId.of("Europe/Moscow")).format(DateTimeFormatter.ofPattern(timePattern));
-                if (time.equals("19:00:00") || time.equals("01:30:00")) {
+                if (time.equals("19:00:00") || time.equals("01:30:00") || time.equals(newApp.getTestTime())) {
                     channelToRemind.sendMessage("<@&" + sonil.getId() + "> Друг, забери своих сонилов").submit();
                 }
 
                 LocalDateTime curTime = LocalDateTime.now(ZoneId.of("Europe/Moscow")).plusMinutes(15);
                 String checkBefore15 = curTime.format(DateTimeFormatter.ofPattern("EEEE HH:mm:ss", Locale.ENGLISH));
                 String check = curTime.minusMinutes(15).format(DateTimeFormatter.ofPattern("EEEE HH:mm:ss", Locale.ENGLISH));
-                Schedule.schedule.forEach((k, v) -> {
+                BossSchedule.schedule.forEach((k, v) -> {
                     for (String date : v) {
                         if (checkBefore15.equals(date)) {
                             channelToRemind.sendMessage("<@&" + boss.getId() + "> " + k + " рес через 15 минут").mention(boss).submit();
