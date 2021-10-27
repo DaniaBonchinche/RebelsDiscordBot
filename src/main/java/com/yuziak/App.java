@@ -28,9 +28,9 @@ public class App {
     public static void main(String[] args) throws Exception {
         App newApp = new App();
         final String guildName = "ФПСеры";
-        final String bossChanelName = "сонилы-боссы";
+        final String bossChanelName = "напоминалка";
         final String bossRoleName = "Босс";
-        final String sonilChanelName = "Сонил";
+        final String sonilRoleName = "Сонил";
 
         String token = "";
 
@@ -45,7 +45,7 @@ public class App {
         bot.awaitReady();
         TextChannel channelToRemind = bot.getTextChannelsByName(bossChanelName, true).get(0);
         Role boss = bot.getGuildsByName(guildName, false).get(0).getRolesByName(bossRoleName, false).get(0);
-        Role sonil = bot.getGuildsByName(guildName, false).get(0).getRolesByName(sonilChanelName, false).get(0);
+        Role sonil = bot.getGuildsByName(guildName, false).get(0).getRolesByName(sonilRoleName, false).get(0);
         while (true) {
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -62,9 +62,9 @@ public class App {
                 BossSchedule.schedule.forEach((k, v) -> {
                     for (String date : v) {
                         if (checkBefore15.equals(date)) {
-                            channelToRemind.sendMessage("<@&" + boss.getId() + "> " + k + " рес через 15 минут").mention(boss).submit();
+                            channelToRemind.sendMessage("<@&" + boss.getId() + "> " + k + " рес через 15 минут").submit();
                         } else if (check.equals(date)) {
-                            channelToRemind.sendMessage("<@&" + boss.getId() + "> " + k + " реснулся").mention(boss).submit();
+                            channelToRemind.sendMessage("<@&" + boss.getId() + "> " + k + " реснулся").submit();
                         }
                     }
                 });

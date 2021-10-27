@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 public class CommandListener extends ListenerAdapter {
@@ -20,19 +22,22 @@ public class CommandListener extends ListenerAdapter {
 
     private final App app;
     private int himkasLopps = 4;
-    private boolean death = false;
-    final String bossChanelName = "сонилы-боссы";
+    final String bossChanelName = "напоминалка";
     private TextChannel channelToRemind;
     private Role himka;
+    private HimkaReminder himkaRem;
+    private FutureTask task;
+
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event)  {
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         if (event.getMessage().getContentDisplay().startsWith("!")) {
-            String channelName = "comands";
+            String channelName0 = "comands";
+            String channelName1 = "напоминалка";
             String himkalRoleName = "Химка";
             channelToRemind = event.getGuild().getTextChannelsByName(bossChanelName, true).get(0);
             himka = event.getGuild().getRolesByName(himkalRoleName, false).get(0);
 
-            if (event.getChannel().getName().equals(channelName)) {
+            if (event.getChannel().getName().equals(channelName0)) {
                 if (event.getMessage().getContentDisplay().startsWith("!testSonil")) {
                     String timePattern = "HH:mm:ss";
                     String time = LocalDateTime.now(ZoneId.of("Europe/Moscow")).plusSeconds(3).format(DateTimeFormatter.ofPattern(timePattern));
@@ -44,38 +49,41 @@ public class CommandListener extends ListenerAdapter {
                     }
                     this.app.setTestTime("19:00:00");
                 }
-                if (event.getMessage().getContentDisplay().startsWith("!himka start")) {
+            }
+            if (event.getChannel().getName().equals(channelName1)) {
+                if (event.getMessage().getContentDisplay().startsWith("!start")) {
                     this.himkasLopps = 4;
-                    try {
-                       // call();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    himkaRem = new HimkaReminder();
+                    task = new FutureTask(himkaRem);
+                    Thread t = new Thread(task);
+                    t.start();
                 }
-                if (event.getMessage().getContentDisplay().startsWith("!himka stop")) {
+                if (event.getMessage().getContentDisplay().startsWith("!stop")) {
                     this.himkasLopps = 0;
                 }
                 if (event.getMessage().getContentDisplay().startsWith("!death")) {
-                    death = true;
                     himkasLopps++;
-                    try {
-                        //call();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    task.cancel(true);
+                    himkaRem = new HimkaReminder();
+                    task = new FutureTask(himkaRem);
+                    Thread t = new Thread(task);
+                    t.start();
                 }
-
             }
         }
     }
 
+    public class HimkaReminder implements Callable {
 
-    public void method() {
-        do {
-            himkasLopps--;
-            channelToRemind.sendMessage("<@&" + himka.getId() + "> ребафни химу").submit();
-            //TimeUnit.SECONDS.sleep(30);
-            death = false;
-        } while (himkasLopps > 0 && !death);
+        @Override
+        public Object call() throws Exception {
+            do {
+                himkasLopps--;
+                channelToRemind.sendMessage("<@&" + himka.getId() + "> ребафни химу").submit();
+                TimeUnit.SECONDS.sleep(15);
+            } while (himkasLopps > 0);
+            return null;
+        }
     }
+
 }

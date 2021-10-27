@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BotEventRoleProvider extends ListenerAdapter {
 
-    private final String bossChanelName = "сонилы-боссы";
+    private final String bossChanelName = "напоминалка";
     private final String bossRoleName = "Босс";
     private final String sonilRoleName = "Сонил";
     private final String himkalRoleName = "Химка";
