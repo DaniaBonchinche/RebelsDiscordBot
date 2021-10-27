@@ -3,6 +3,7 @@ package com.yuziak.listeners;
 import com.yuziak.App;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -21,12 +24,10 @@ public class CommandListener extends ListenerAdapter {
     }
 
     private final App app;
-    private int himkasLopps = 4;
+
     final String bossChanelName = "напоминалка";
-    private TextChannel channelToRemind;
-    private Role himka;
-    private HimkaReminder himkaRem;
-    private FutureTask task;
+
+    private List<HimkaReminder> himkaPool = new LinkedList<>();
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -34,8 +35,7 @@ public class CommandListener extends ListenerAdapter {
             String channelName0 = "comands";
             String channelName1 = "напоминалка";
             String himkalRoleName = "Химка";
-            channelToRemind = event.getGuild().getTextChannelsByName(bossChanelName, true).get(0);
-            himka = event.getGuild().getRolesByName(himkalRoleName, false).get(0);
+
 
             if (event.getChannel().getName().equals(channelName0)) {
                 if (event.getMessage().getContentDisplay().startsWith("!testSonil")) {
@@ -52,36 +52,75 @@ public class CommandListener extends ListenerAdapter {
             }
             if (event.getChannel().getName().equals(channelName1)) {
                 if (event.getMessage().getContentDisplay().startsWith("!start")) {
-                    this.himkasLopps = 4;
-                    himkaRem = new HimkaReminder();
-                    task = new FutureTask(himkaRem);
-                    Thread t = new Thread(task);
-                    t.start();
+                    /*
+                    HimkaReminder himkaReminder= new HimkaReminder(event.getAuthor());
+                    himkaReminder.start();
+                    himkaPool.add(himkaReminder);
+                    */
                 }
                 if (event.getMessage().getContentDisplay().startsWith("!stop")) {
-                    this.himkasLopps = 0;
+                    for (HimkaReminder h : himkaPool) {
+                        if (h.getUser().equals(event.getAuthor())) {
+                            //                   h.stop();
+                        }
+                    }
                 }
                 if (event.getMessage().getContentDisplay().startsWith("!death")) {
-                    himkasLopps++;
-                    task.cancel(true);
-                    himkaRem = new HimkaReminder();
-                    task = new FutureTask(himkaRem);
-                    Thread t = new Thread(task);
-                    t.start();
+                    for (HimkaReminder h : himkaPool) {
+                        if (h.getUser().equals(event.getAuthor())) {
+                            //            h.death();
+                        }
+                    }
                 }
             }
         }
     }
 
     public class HimkaReminder implements Callable {
+        public HimkaReminder(User userRemind) {
+            this.userRemind = userRemind;
+        }
+
+        public User getUser() {
+            return userRemind;
+        }
+
+        private final User userRemind;
+        private int himkaLoops;
+        FutureTask task;
+
+        public void start() {
+            himkaLoops = 4;
+            task = new FutureTask(this);
+            Thread t = new Thread(task);
+            t.start();
+        }
+
+        public void stop() {
+            himkaLoops = 0;
+        }
+
+        public void death() {
+            task.cancel(true);
+            himkaLoops++;
+            task = new FutureTask(this);
+            Thread t = new Thread(task);
+            t.start();
+        }
 
         @Override
         public Object call() throws Exception {
             do {
-                himkasLopps--;
-                channelToRemind.sendMessage("<@&" + himka.getId() + "> ребафни химу").submit();
+                himkaLoops--;
+                userRemind.openPrivateChannel().submit();
+                userRemind.getJDA().getPrivateChannels().forEach(privateChannel -> {
+                    if (privateChannel.getUser().equals(userRemind)) {
+                        privateChannel.sendMessage("Ребаф " + (4 - himkaLoops)).submit();
+                        privateChannel.deleteMessageById(privateChannel.getLatestMessageId()).queueAfter(1, TimeUnit.MINUTES);
+                    }
+                });
                 TimeUnit.SECONDS.sleep(15);
-            } while (himkasLopps > 0);
+            } while (himkaLoops > 0);
             return null;
         }
     }
