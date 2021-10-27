@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -52,23 +53,23 @@ public class CommandListener extends ListenerAdapter {
             }
             if (event.getChannel().getName().equals(channelName1)) {
                 if (event.getMessage().getContentDisplay().startsWith("!start")) {
-                    /*
-                    HimkaReminder himkaReminder= new HimkaReminder(event.getAuthor());
+
+                    HimkaReminder himkaReminder = new HimkaReminder(event.getAuthor());
                     himkaReminder.start();
                     himkaPool.add(himkaReminder);
-                    */
+
                 }
                 if (event.getMessage().getContentDisplay().startsWith("!stop")) {
                     for (HimkaReminder h : himkaPool) {
                         if (h.getUser().equals(event.getAuthor())) {
-                            //                   h.stop();
+                            h.stop();
                         }
                     }
                 }
                 if (event.getMessage().getContentDisplay().startsWith("!death")) {
                     for (HimkaReminder h : himkaPool) {
                         if (h.getUser().equals(event.getAuthor())) {
-                            //            h.death();
+                            h.death();
                         }
                     }
                 }
@@ -97,11 +98,13 @@ public class CommandListener extends ListenerAdapter {
         }
 
         public void stop() {
-            himkaLoops = 0;
+            System.out.println("stop");
+            task.cancel(true);
         }
 
         public void death() {
             task.cancel(true);
+            System.out.println("death");
             himkaLoops++;
             task = new FutureTask(this);
             Thread t = new Thread(task);
@@ -112,15 +115,21 @@ public class CommandListener extends ListenerAdapter {
         public Object call() throws Exception {
             do {
                 himkaLoops--;
-                userRemind.openPrivateChannel().submit();
+              /*  userRemind.openPrivateChannel().submit();
                 userRemind.getJDA().getPrivateChannels().forEach(privateChannel -> {
                     if (privateChannel.getUser().equals(userRemind)) {
                         privateChannel.sendMessage("Ребаф " + (4 - himkaLoops)).submit();
                         privateChannel.deleteMessageById(privateChannel.getLatestMessageId()).queueAfter(1, TimeUnit.MINUTES);
                     }
                 });
+                                */
+                String timePattern = "HH:mm:ss";
+                String time = LocalDateTime.now(ZoneId.of("Europe/Moscow")).format(DateTimeFormatter.ofPattern(timePattern));
+
+                System.out.println("aaa "+ time);
                 TimeUnit.SECONDS.sleep(15);
             } while (himkaLoops > 0);
+            System.out.println("end");
             return null;
         }
     }

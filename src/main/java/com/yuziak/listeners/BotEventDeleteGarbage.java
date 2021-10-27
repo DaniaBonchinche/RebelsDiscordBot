@@ -16,8 +16,7 @@ public class BotEventDeleteGarbage extends ListenerAdapter {
         final String himkalRoleName = "Химка";
 
         String bossChanelName = "напоминалка";
-        if (event.getMessage().getAuthor().isBot() && event.getChannel().getName().equals(bossChanelName)) {
-            System.out.println(event.getMessage().getContentDisplay());
+        if (event.getChannel().getName().equals(bossChanelName)) {
             if (event.getMessage().getContentDisplay().contains("рес" )) {
                 event.getMessage().delete().queueAfter(15, TimeUnit.MINUTES);
             }else if (event.getMessage().getContentDisplay().contains("сонилов")) {
