@@ -1,6 +1,7 @@
 package com.yuziak.listeners;
 
 import com.yuziak.App;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -53,23 +54,23 @@ public class CommandListener extends ListenerAdapter {
             }
             if (event.getChannel().getName().equals(channelName1)) {
                 if (event.getMessage().getContentDisplay().startsWith("!start")) {
-
+/*
                     HimkaReminder himkaReminder = new HimkaReminder(event.getAuthor());
                     himkaReminder.start();
-                    himkaPool.add(himkaReminder);
+                    himkaPool.add(himkaReminder);*/
 
                 }
                 if (event.getMessage().getContentDisplay().startsWith("!stop")) {
                     for (HimkaReminder h : himkaPool) {
                         if (h.getUser().equals(event.getAuthor())) {
-                            h.stop();
+                 //           h.stop();
                         }
                     }
                 }
                 if (event.getMessage().getContentDisplay().startsWith("!death")) {
                     for (HimkaReminder h : himkaPool) {
                         if (h.getUser().equals(event.getAuthor())) {
-                            h.death();
+                  //          h.death();
                         }
                     }
                 }
@@ -98,13 +99,14 @@ public class CommandListener extends ListenerAdapter {
         }
 
         public void stop() {
-            System.out.println("stop");
-            task.cancel(true);
+            //  System.out.println("stop");
+            himkaLoops=0;
+            deleteAll(userRemind);
         }
 
         public void death() {
             task.cancel(true);
-            System.out.println("death");
+            // System.out.println("death");
             himkaLoops++;
             task = new FutureTask(this);
             Thread t = new Thread(task);
@@ -115,23 +117,29 @@ public class CommandListener extends ListenerAdapter {
         public Object call() throws Exception {
             do {
                 himkaLoops--;
-              /*  userRemind.openPrivateChannel().submit();
-                userRemind.getJDA().getPrivateChannels().forEach(privateChannel -> {
-                    if (privateChannel.getUser().equals(userRemind)) {
-                        privateChannel.sendMessage("Ребаф " + (4 - himkaLoops)).submit();
-                        privateChannel.deleteMessageById(privateChannel.getLatestMessageId()).queueAfter(1, TimeUnit.MINUTES);
-                    }
-                });
-                                */
-                String timePattern = "HH:mm:ss";
-                String time = LocalDateTime.now(ZoneId.of("Europe/Moscow")).format(DateTimeFormatter.ofPattern(timePattern));
+                sendMessage(userRemind, "Бафай химу");
 
-                System.out.println("aaa "+ time);
-                TimeUnit.SECONDS.sleep(15);
+                // System.out.println(userRemind.getAsTag());
+                TimeUnit.SECONDS.sleep(870);
             } while (himkaLoops > 0);
-            System.out.println("end");
+            deleteAll(userRemind);
             return null;
         }
     }
 
+    static void sendMessage(User user, String content) {
+        user.openPrivateChannel().queue(channel -> {
+            channel.sendMessage(content).queue();
+            channel.deleteMessageById(channel.getLatestMessageId()).queueAfter(30, TimeUnit.SECONDS);
+
+        });
+    }
+
+    static void deleteAll(User user) {
+        user.openPrivateChannel().queue(channel -> {
+            channel.getHistory().getRetrievedHistory().forEach(message ->
+                    channel.deleteMessageById(message.getId()).submit()
+            );
+        });
+    }
 }

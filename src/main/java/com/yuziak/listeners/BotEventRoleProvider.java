@@ -11,21 +11,17 @@ public class BotEventRoleProvider extends ListenerAdapter {
     private final String bossChanelName = "напоминалка";
     private final String bossRoleName = "Босс";
     private final String sonilRoleName = "Сонил";
-    private final String himkalRoleName = "Химка";
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
 
         Role boss = event.getGuild().getRolesByName(bossRoleName, false).get(0);
         Role sonil = event.getGuild().getRolesByName(sonilRoleName, false).get(0);
-        Role himka = event.getGuild().getRolesByName(himkalRoleName, false).get(0);
         if (event.getChannel().getName().equals(bossChanelName)) {
             if (event.getReactionEmote().getName().equals("\uD83E\uDD8E")) {
                 event.getGuild().addRoleToMember(event.getUserId(), sonil).submit();
             } else if (event.getReactionEmote().getName().equals("\uD83D\uDC17")) {
                 event.getGuild().addRoleToMember(event.getUserId(), boss).submit();
-            }else if (event.getReactionEmote().getName().equals("\uD83E\uDDEA")) {
-                event.getGuild().addRoleToMember(event.getUserId(), himka).submit();
             }
         }
 
@@ -35,14 +31,11 @@ public class BotEventRoleProvider extends ListenerAdapter {
     public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
         Role boss = event.getGuild().getRolesByName(bossRoleName, false).get(0);
         Role sonil = event.getGuild().getRolesByName(sonilRoleName, false).get(0);
-        Role himka = event.getGuild().getRolesByName(himkalRoleName, false).get(0);
         if (event.getChannel().getName().equals(bossChanelName)) {
             if (event.getReactionEmote().getName().equals("\uD83E\uDD8E")) {
                 event.getGuild().removeRoleFromMember(event.getUserId(), sonil).submit();
             } else if (event.getReactionEmote().getName().equals("\uD83D\uDC17")) {
                 event.getGuild().removeRoleFromMember(event.getUserId(), boss).submit();
-            }else if (event.getReactionEmote().getName().equals("\uD83E\uDDEA")) {
-                event.getGuild().removeRoleFromMember(event.getUserId(), himka).submit();
             }
         }
     }
