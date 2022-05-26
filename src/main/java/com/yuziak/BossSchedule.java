@@ -16,12 +16,12 @@ public class BossSchedule {
                 "Friday 00:00:00", "Friday 16:00:00", "Saturday 00:00:00", "Saturday 10:00:00",
                 "Sunday 18:00:00"});
         schedule.put("Кутум", new String[]{"Monday 12:00:00", "Monday 18:00:00", "Tuesday 16:00:00",
-                "Wednesday 00:00:00", "Thursday 01:00:00", "Thursday 22:00:00", "Friday 14:00:00",
+                "Wednesday 00:00:00", "Thursday 01:00:00", "Thursday 14:00:00", "Friday 14:00:00",
                 "Saturday 01:00:00", "Saturday 12:00:00", "Saturday 18:00:00", "Sunday 10:00:00",
                 "Sunday 14:00:00"});
         schedule.put("Камос", new String[]{"Thursday 23:00:00", "Sunday 00:00:00", "Sunday 12:00:00"});
         schedule.put("Велл", new String[]{"Wednesday 23:00:00", "Sunday 16:00:00"});
         schedule.put("Биба и Боба", new String[]{"Tuesday 23:00:00", "Saturday 14:00:00"});
-        schedule.put("Офин", new String[]{"Wednesday 18:00:00", "Friday 15:19:00", "Sunday 23:00:00"});
+        schedule.put("Офин", new String[]{"Wednesday 18:00:00", "Friday 23:00:00", "Sunday 23:00:00"});
     }
 }

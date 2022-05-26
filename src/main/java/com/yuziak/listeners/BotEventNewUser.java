@@ -9,14 +9,13 @@ import org.jetbrains.annotations.NotNull;
 public class BotEventNewUser extends ListenerAdapter {
 
 
-
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         System.out.println("new member");
         String joindUserRoleName = "Пропущенный";
         String chanellName = "кто-залетел";
         Role joined = event.getGuild().getRolesByName(joindUserRoleName, false).get(0);
-        event.getGuild().addRoleToMember(event.getMember().getId(), joined).submit();
+        event.getGuild().addRoleToMember(event.getMember(), joined).submit();
         event.getGuild().getTextChannelsByName(chanellName, false).get(0).sendMessage(
                 event.getUser().getAsTag() + " залетел к нам на сервер").submit();
     }
