@@ -17,6 +17,14 @@ public class InRegQueueListener extends ListenerAdapter {
     final String BLACKSTAR_CHANELL = "бс-на-ауке";
     final String guildName = "ФПСеры";
     final String aukRoleNameRoleName = "Аук";
+    final String[] excluded = {"\"PEN Blackstar Helmet\" RU", "\"PEN Blackstar Gloves\" RU", "\"PEN Blackstar Shoes\" RU", "\"PEN Blackstar Armor\" RU",};
+    final static String[] AWAKENING_BS = {"\"PEN Blackstar Greatsword", "PEN Blackstar Vediant", "PEN Blackstar Jordun", "PEN Blackstar Gardbrace",
+            "PEN Blackstar Crimson Glaives", "PEN Blackstar Celestial Bo Staff", "PEN Blackstar Iron Buster", "PEN Blackstar Scythe",
+            "PEN Blackstar Kerispear", "PEN Blackstar Lancia", "PEN Blackstar Kamasylven Sword", "PEN Blackstar Godr Sphera",
+            "PEN Blackstar Crescent Blade", "PEN Blackstar Sura Katana", "PEN Blackstar Sting", "PEN Blackstar Aad Sphera",
+            "PEN Blackstar Greatbow", "PEN Blackstar Sah Chakram", "PEN Blackstar Cestus", "PEN Blackstar Kibelius", "PEN Blackstar Patraca",
+            "PEN Blackstar Dual Glaives"
+    };
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -29,16 +37,17 @@ public class InRegQueueListener extends ListenerAdapter {
                 MessageEmbed.AuthorInfo info = x.getAuthor();
                 if (info != null) {
                     String title = info.getName();
-                    System.out.println(title);
-                    if (title.contains("PEN Blackstar")) {
-                        channelForBS.sendMessage("<@&" + auk.getId() + ">").submit();
-                        channelForBS.sendMessageEmbeds(x).submit();
+                    for (String bsName : AWAKENING_BS) {
+                        if (title.contains(bsName)) {
+                            channelForBS.sendMessage("<@&" + auk.getId() + ">").submit();
+                            channelForBS.sendMessageEmbeds(x).submit();
+                        }
                     }
                 }
+
             });
 
         }
     }
-
 
 }
