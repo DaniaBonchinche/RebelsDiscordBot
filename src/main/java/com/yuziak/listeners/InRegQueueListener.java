@@ -17,12 +17,16 @@ public class InRegQueueListener extends ListenerAdapter {
 
     final String GARMOTH_CHANELL = "все-лоты";
     final String BLACKSTAR_MAIN_CHANELL = "бс-меин-аук";
+    final String BLACKSTAR_MAIN4_CHANELL = "глаз-родэ-4";
     final String BLACKSTAR_AWA_CHANELL = "бс-пробуда-аук";
     final String guildName = "ФПСеры";
     final String aukRoleNameRoleName = "Аук";
     final String[] excluded = {"\"PEN Blackstar Helmet\" RU", "\"PEN Blackstar Gloves\" RU", "\"PEN Blackstar Shoes\" RU", "\"PEN Blackstar Armor\" RU",};
-    final static String BS = "PEN Blackstar ";
-    final static String Godr_Ayed = "+5 Godr-Ayed ";
+    final static String BS = "Blackstar ";
+    final static String Godr_Ayed = "Godr-Ayed ";
+    final static String PLUS5 = "+5 ";
+    final static String PLUS4 = "+4 ";
+    final static String PEN = "PEN ";
 
     final static String[] AWAKENING = {"\"Greatsword", "Vediant", "Jordun", "Gardbrace", "Crimson Glaives", "Celestial Bo Staff", "Iron Buster", "Scythe",
             "Kerispear", "Lancia", "Kamasylven Sword", "Godr Sphera", "Crescent Blade", "Sura Katana", "Sting", "Aad Sphera", "Greatbow", "Sah Chakram",
@@ -33,7 +37,8 @@ public class InRegQueueListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        TextChannel channelBsMin = event.getGuild().getTextChannelsByName(BLACKSTAR_MAIN_CHANELL, true).get(0);
+        TextChannel channelBsMain = event.getGuild().getTextChannelsByName(BLACKSTAR_MAIN_CHANELL, true).get(0);
+        TextChannel channelBsMain4 = event.getGuild().getTextChannelsByName(BLACKSTAR_MAIN4_CHANELL, true).get(0);
         TextChannel channelBsAwa = event.getGuild().getTextChannelsByName(BLACKSTAR_AWA_CHANELL, true).get(0);
 
         Role auk = event.getJDA().getGuildsByName(guildName, false).get(0).getRolesByName(aukRoleNameRoleName, false).get(0);
@@ -46,10 +51,13 @@ public class InRegQueueListener extends ListenerAdapter {
                 if (info != null) {
                     String title = info.getName();
 
-                    Arrays.stream(AWAKENING).map(name -> BS + name).forEach(name -> send(channelBsAwa, auk, message, title, name));
-                    Arrays.stream(AWAKENING).map(name -> Godr_Ayed + name).forEach(name -> send(channelBsAwa, auk, message, title, name));
-                    Arrays.stream(Main).map(name -> BS + name).forEach(name -> send(channelBsMin, auk, message, title, name));
-                    Arrays.stream(Main).map(name -> Godr_Ayed + name).forEach(name -> send(channelBsMin, auk, message, title, name));
+                    Arrays.stream(AWAKENING).map(name ->PEN + BS + name).forEach(name -> send(channelBsAwa, auk, message, title, name));
+                    Arrays.stream(AWAKENING).map(name ->PLUS5 + Godr_Ayed + name).forEach(name -> send(channelBsAwa, auk, message, title, name));
+
+                    Arrays.stream(Main).map(name ->PEN + BS + name).forEach(name -> send(channelBsMain, auk, message, title, name));
+                    Arrays.stream(Main).map(name ->PLUS5 + Godr_Ayed + name).forEach(name -> send(channelBsMain, auk, message, title, name));
+
+                    Arrays.stream(Main).map(name ->PLUS4 + Godr_Ayed + name).forEach(name -> send(channelBsMain4, auk, message, title, name));
 
                 }
             });
