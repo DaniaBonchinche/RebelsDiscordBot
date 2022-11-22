@@ -18,8 +18,6 @@ public class App {
         bot.getPresence().setActivity(Activity.watching("Anime"));
 
         bot.addEventListener(new BotEventNewUser());
-        bot.addEventListener(new InRegQueueListener());
-
 
         bot.awaitReady();
 

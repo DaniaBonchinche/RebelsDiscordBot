@@ -175,15 +175,9 @@ public class QueueChecker {
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         eb.setDescription("Live at: " + sdfDate.format(queueItem.getLiveAt()));
 
-        eb.addField("Title of field", "test of field", false);
-
-        eb.addBlankField(false);
-
         eb.setAuthor("Daniil", null, "https://cdn.discordapp.com/avatars/900039144946929724/ed553654042e7caf124cf30933c9cef8.png");
 
-        eb.setFooter("Footer", garmothAssetsUrl + queueItem.getId() + ".png");
-
-        eb.setImage(garmothAssetsUrl + queueItem.getId() + ".png");
+        eb.setFooter("ФПСеры", "https://cdn.discordapp.com/avatars/900039144946929724/ed553654042e7caf124cf30933c9cef8.png");
 
         eb.setThumbnail(garmothAssetsUrl + queueItem.getId() + ".png");
 
