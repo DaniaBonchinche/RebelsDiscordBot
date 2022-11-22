@@ -172,8 +172,10 @@ public class QueueChecker {
 
         eb.setColor(new Color(0x37FFFFFF, true));
 
+        String price = queueItem.getPrice().toString();
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        eb.setDescription("Live at: " + sdfDate.format(queueItem.getLiveAt()));
+        eb.setDescription("Price: "+ price +"\n"
+                + "Live at: " + sdfDate.format(new Date(queueItem.getLiveAt())));
 
         eb.setAuthor("Daniil", null, "https://cdn.discordapp.com/avatars/900039144946929724/ed553654042e7caf124cf30933c9cef8.png");
 
