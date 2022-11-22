@@ -2,7 +2,7 @@ package com.yuziak.listeners;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 
 public class InRegQueueListener extends ListenerAdapter {
@@ -26,7 +25,7 @@ public class InRegQueueListener extends ListenerAdapter {
     final static String Godr_Ayed = "Godr-Ayed ";
     final static String PLUS5 = "+5 ";
     final static String PLUS4 = "+4 ";
-    final static String PEN = "PEN ";
+    final static String PEN = "PEN: ";
 
     final static String[] AWAKENING = {"\"Greatsword", "Vediant", "Jordun", "Gardbrace", "Crimson Glaives", "Celestial Bo Staff", "Iron Buster", "Scythe",
             "Kerispear", "Lancia", "Kamasylven Sword", "Godr Sphera", "Crescent Blade", "Sura Katana", "Sting", "Aad Sphera", "Greatbow", "Sah Chakram",
