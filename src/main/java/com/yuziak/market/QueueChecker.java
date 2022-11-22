@@ -132,6 +132,10 @@ public class QueueChecker {
             send(channelBsMain, queueItem);
         }
 
+//        if (isNeeded(queueItem, geMain, 4L)) {
+//            send(channelBsMain, queueItem);
+//        }
+
         String[] bsAwa = Arrays.stream(AWAKENING).map(name -> BS + name).toArray(String[]::new);
         if (isNeeded(queueItem, bsAwa, 20L)) {
             send(channelBsAwa, queueItem);
@@ -142,11 +146,11 @@ public class QueueChecker {
             send(channelBsAwa, queueItem);
         }
 
-        //Test
-        String[] test = {"Black Distortion Earring"};
-        if (isNeeded(queueItem, test, 4L)) {
-            send(channelBsAwa, queueItem);
-        }
+//        //Test
+//        String[] test = {"Black Distortion Earring"};
+//        if (isNeeded(queueItem, test, 4L)) {
+//            send(channelBsAwa, queueItem);
+//        }
     }
 
     private boolean isNeeded(QueueItem queueItem, String[] names, Long subId) {
