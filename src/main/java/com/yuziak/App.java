@@ -25,6 +25,7 @@ public class App {
 
        // BossSchedule.doSchedule(bot);
         QueueChecker queueChecker = new QueueChecker();
+        queueChecker.start(bot);
     }
 
 

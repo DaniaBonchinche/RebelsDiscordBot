@@ -3,23 +3,32 @@ package com.yuziak.market;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
+import java.awt.*;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class QueueChecker {
 
     private final String urlPath = "https://api.arsha.io/v2/ru/GetWorldMarketWaitList";
-    private final String garmothAssetsUrl="assets.garmoth.com/items/";
+    private final String garmothAssetsUrl = "https://assets.garmoth.com/items/";
     private List<QueueItem> currentRegistrationQueue = new ArrayList<>();
-
+    final String BLACKSTAR_MAIN_CHANELL = "бс-меин-аук";
+    final String BLACKSTAR_AWA_CHANELL = "бс-пробуда-аук";
+    final String guildName = "ФПСеры";
+    final String aukRoleNameRoleName = "Аук";
     final static String BS = "Blackstar ";
     final static String Godr_Ayed = "Godr-Ayed ";
     final static String[] AWAKENING = {"\"Greatsword", "Vediant", "Jordun", "Gardbrace", "Crimson Glaives", "Celestial Bo Staff", "Iron Buster", "Scythe",
@@ -29,19 +38,17 @@ public class QueueChecker {
     final static String[] Main = {"Longsword", "Longbow", "Amulet", "Axe", "Shortsword", "Blade", "Staff", "Kriegsmesser", "Gauntlet", "Crescent Pendulum",
             "Crossbow", "Florang", "Battle Axe", "Shamshir", "Morning Star", "Kyve", "Serenaca", "Slayer"};
 
+    TextChannel channelBsMain;
+    TextChannel channelBsAwa;
+    Role auk;
 
-    public static void main(String[] args) {
-//
-//        QueueChecker queueChecker = new QueueChecker();
-//
-//        List<QueueItem> queueItem = queueChecker.mapToQueueItem(queueChecker.check());
+    public void start(JDA bot) throws InterruptedException {
 
+        Guild guild = bot.getGuildsByName(guildName, false).get(0);
+        channelBsMain = guild.getTextChannelsByName(BLACKSTAR_MAIN_CHANELL, true).get(0);
+        channelBsAwa = guild.getTextChannelsByName(BLACKSTAR_AWA_CHANELL, true).get(0);
+        auk = guild.getRolesByName(aukRoleNameRoleName, false).get(0);
 
-        System.out.println(new Date().getTime());
-    }
-
-
-    public void start() throws InterruptedException {
         while (true) {
             TimeUnit.MINUTES.sleep(1);
 
@@ -104,23 +111,23 @@ public class QueueChecker {
 
     private void checkNeededItems(QueueItem queueItem) {
         String[] bsMain = Arrays.stream(Main).map(name -> BS + name).toArray(String[]::new);
-        if (isNeeded(queueItem,bsMain,20L)){
-            //    send();
+        if (isNeeded(queueItem, bsMain, 20L)) {
+            send(channelBsMain, queueItem);
         }
 
         String[] geMain = Arrays.stream(Main).map(name -> Godr_Ayed + name).toArray(String[]::new);
-        if (isNeeded(queueItem,bsMain,5L)){
-            //    send();
+        if (isNeeded(queueItem, geMain, 5L)) {
+            send(channelBsMain, queueItem);
         }
 
         String[] bsAwa = Arrays.stream(AWAKENING).map(name -> BS + name).toArray(String[]::new);
-        if (isNeeded(queueItem,bsMain,20L)){
-            //    send();
+        if (isNeeded(queueItem, bsAwa, 20L)) {
+            send(channelBsAwa, queueItem);
         }
 
         String[] geAwa = Arrays.stream(AWAKENING).map(name -> Godr_Ayed + name).toArray(String[]::new);
-        if (isNeeded(queueItem,bsMain,5L)){
-            //    send();
+        if (isNeeded(queueItem, geAwa, 5L)) {
+            send(channelBsAwa, queueItem);
         }
 
 
@@ -138,15 +145,34 @@ public class QueueChecker {
         return false;
     }
 
-    private void send(TextChannel channel, Role auk, QueueItem queueItem) {
-
-            channel.sendMessage("<@&" + auk.getId() + ">").submit();
-     //       channel.sendMessageEmbeds().submit();
-
+    private void send(TextChannel channel, QueueItem queueItem) {
+        channel.sendMessage("<@&" + auk.getId() + ">").submit();
+        MessageEmbed itemMessage = createMessage(queueItem);
+        channel.sendMessageEmbeds(itemMessage).queue();
     }
 
     private MessageEmbed createMessage(QueueItem queueItem) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(queueItem.getName(), null);
 
+        eb.setColor(new Color(0x37FFFFFF, true));
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        eb.setDescription("Live at: " + sdfDate.format(queueItem.getLiveAt()));
+
+        eb.addField("Title of field", "test of field", false);
+
+        eb.addBlankField(false);
+
+        eb.setAuthor("Daniil", null, "https://cdn.discordapp.com/avatars/900039144946929724/ed553654042e7caf124cf30933c9cef8.png");
+
+        eb.setFooter("Footer", garmothAssetsUrl + queueItem.getId() + ".png");
+
+        eb.setImage(garmothAssetsUrl + queueItem.getId() + ".png");
+
+        eb.setThumbnail(garmothAssetsUrl + queueItem.getId() + ".png");
+
+        return eb.build();
     }
 
 }
