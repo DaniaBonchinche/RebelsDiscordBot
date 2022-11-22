@@ -27,6 +27,7 @@ public class QueueChecker {
     final String BLACKSTAR_MAIN_CHANEL = "бс-меин-аук";
     final String BLACKSTAR_AWA_CHANEL = "бс-пробуда-аук";
     final String CURRENT_QUEUE_CHANEL = "текущие-лот";
+    final String OTHER_CHANEL = "по-мелочи";
     final String guildName = "ФПСеры";
     final String aukRoleNameRoleName = "Аук";
     final static String BS = "Blackstar ";
@@ -37,9 +38,11 @@ public class QueueChecker {
     };
     final static String[] Main = {"Longsword", "Longbow", "Amulet", "Axe", "Shortsword", "Blade", "Staff", "Kriegsmesser", "Gauntlet", "Crescent Pendulum",
             "Crossbow", "Florang", "Battle Axe", "Shamshir", "Morning Star", "Kyve", "Serenaca", "Slayer"};
+    final static String[] Necklaces = {"Ogre Ring", "Laytenn's Power Stone", "Tungrad Necklace"};
 
     TextChannel channelCurQueue;
     TextChannel channelBsMain;
+    TextChannel channelOther;
     TextChannel channelBsAwa;
     Role auk;
 
@@ -49,6 +52,7 @@ public class QueueChecker {
         channelBsMain = guild.getTextChannelsByName(BLACKSTAR_MAIN_CHANEL, true).get(0);
         channelBsAwa = guild.getTextChannelsByName(BLACKSTAR_AWA_CHANEL, true).get(0);
         channelCurQueue = guild.getTextChannelsByName(CURRENT_QUEUE_CHANEL, true).get(0);
+        channelOther = guild.getTextChannelsByName(OTHER_CHANEL, true).get(0);
 
         auk = guild.getRolesByName(aukRoleNameRoleName, false).get(0);
 
@@ -132,9 +136,6 @@ public class QueueChecker {
             send(channelBsMain, queueItem);
         }
 
-//        if (isNeeded(queueItem, geMain, 4L)) {
-//            send(channelBsMain, queueItem);
-//        }
 
         String[] bsAwa = Arrays.stream(AWAKENING).map(name -> BS + name).toArray(String[]::new);
         if (isNeeded(queueItem, bsAwa, 20L)) {
@@ -146,10 +147,18 @@ public class QueueChecker {
             send(channelBsAwa, queueItem);
         }
 
+        if (isNeeded(queueItem, Necklaces, 5L)) {
+            send(channelOther, queueItem);
+        }
+
+
 //        //Test
 //        String[] test = {"Black Distortion Earring"};
 //        if (isNeeded(queueItem, test, 4L)) {
 //            send(channelBsAwa, queueItem);
+//        }
+//        if (isNeeded(queueItem, geMain, 4L)) {
+//            send(channelBsMain, queueItem);
 //        }
     }
 
@@ -182,7 +191,7 @@ public class QueueChecker {
         eb.setDescription("Price: " + price + "\n"
                 + "Live at: " + sdfDate.format(new Date(queueItem.getLiveAt() * 1000)));
 
-        eb.setFooter("ФПСеры", "https://cdn.discordapp.com/avatars/900039144946929724/ed553654042e7caf124cf30933c9cef8.png");
+        eb.setFooter("Бесполезный Даня");
 
         eb.setThumbnail(garmothAssetsUrl + queueItem.getId() + ".png");
 
@@ -203,6 +212,9 @@ public class QueueChecker {
             rank++;
 
             price = price.divide((BigInteger.valueOf(10)));
+        }
+        if (sb.toString().startsWith(",")) {
+            return sb.substring(1);
         }
         return sb.toString();
     }
