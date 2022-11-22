@@ -12,6 +12,7 @@ import org.jsoup.Jsoup;
 
 import java.awt.*;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -53,7 +54,7 @@ public class QueueChecker {
 
         while (true) {
             Long currentTime = new Date().getTime();
-            currentRegistrationQueue.removeIf(queueItem -> queueItem.getLiveAt() < currentTime);
+            currentRegistrationQueue.removeIf(queueItem -> queueItem.getLiveAt() * 1000 < currentTime);
 
             String queueJSON = check();
             List<QueueItem> newQueueItems = mapToQueueItem(queueJSON);
@@ -170,14 +171,12 @@ public class QueueChecker {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle(queueItem.getName(), null);
 
-        eb.setColor(new Color(0x37FFFFFF, true));
+        eb.setColor(new Color(0xFFFFF000, true));
 
-        String price = queueItem.getPrice().toString();
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        eb.setDescription("Price: "+ price +"\n"
-                + "Live at: " + sdfDate.format(new Date(queueItem.getLiveAt())));
-
-        eb.setAuthor("Daniil", null, "https://cdn.discordapp.com/avatars/900039144946929724/ed553654042e7caf124cf30933c9cef8.png");
+        String price = editPriceView(queueItem.getPrice());
+        SimpleDateFormat sdfDate = new SimpleDateFormat("MM-dd HH:mm:ss");
+        eb.setDescription("Price: " + price + "\n"
+                + "Live at: " + sdfDate.format(new Date(queueItem.getLiveAt() * 1000)));
 
         eb.setFooter("ФПСеры", "https://cdn.discordapp.com/avatars/900039144946929724/ed553654042e7caf124cf30933c9cef8.png");
 
@@ -185,5 +184,24 @@ public class QueueChecker {
 
         return eb.build();
     }
+
+    private String editPriceView(BigInteger price) {
+        StringBuilder sb = new StringBuilder();
+
+        int rank = 1;
+        while (price.compareTo(BigInteger.ONE) >= 0) {
+            BigInteger lastChar = price.mod(BigInteger.valueOf(10));
+            sb.insert(0, lastChar);
+            if (rank % 3 == 0) {
+
+                sb.insert(0, ',');
+            }
+            rank++;
+
+            price = price.divide((BigInteger.valueOf(10)));
+        }
+        return sb.toString();
+    }
+
 
 }
