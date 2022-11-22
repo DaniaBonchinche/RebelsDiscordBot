@@ -19,45 +19,32 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.yuziak.MessageCreator.createMessage;
+
 public class QueueChecker {
 
     private final String urlPath = "https://api.arsha.io/v2/ru/GetWorldMarketWaitList";
-    private final String garmothAssetsUrl = "https://assets.garmoth.com/items/";
     private List<QueueItem> currentRegistrationQueue = new ArrayList<>();
-    final String BLACKSTAR_MAIN_CHANEL = "бс-меин-аук";
-    final String BLACKSTAR_AWA_CHANEL = "бс-пробуда-аук";
-    final String CURRENT_QUEUE_CHANEL = "текущие-лот";
-    final String OTHER_CHANEL = "по-мелочи";
+
+    private List<WishListItem> wishListItems = new ArrayList<>();
     final String guildName = "ФПСеры";
-    final String aukRoleNameRoleName = "Аук";
-    final static String BS = "Blackstar ";
-    final static String Godr_Ayed = "Godr-Ayed ";
-    final static String[] AWAKENING = {"\"Greatsword", "Vediant", "Jordun", "Gardbrace", "Crimson Glaives", "Celestial Bo Staff", "Iron Buster", "Scythe",
-            "Kerispear", "Lancia", "Kamasylven Sword", "Godr Sphera", "Crescent Blade", "Sura Katana", "Sting", "Aad Sphera", "Greatbow", "Sah Chakram",
-            "Cestus", "Kibelius", "Patraca", "Dual Glaives"
-    };
-    final static String[] Main = {"Longsword", "Longbow", "Amulet", "Axe", "Shortsword", "Blade", "Staff", "Kriegsmesser", "Gauntlet", "Crescent Pendulum",
-            "Crossbow", "Florang", "Battle Axe", "Shamshir", "Morning Star", "Kyve", "Serenaca", "Slayer"};
-    final static String[] Necklaces = {"Ogre Ring", "Laytenn's Power Stone", "Tungrad Necklace"};
+
+    final String CURRENT_QUEUE_CHANEL = "текущие-лоты";
+    final String JSON_CHANEL = "json-для-хотелок";
 
     TextChannel channelCurQueue;
-    TextChannel channelBsMain;
-    TextChannel channelOther;
-    TextChannel channelBsAwa;
-    Role auk;
 
     public void start(JDA bot) throws InterruptedException {
-
         Guild guild = bot.getGuildsByName(guildName, false).get(0);
-        channelBsMain = guild.getTextChannelsByName(BLACKSTAR_MAIN_CHANEL, true).get(0);
-        channelBsAwa = guild.getTextChannelsByName(BLACKSTAR_AWA_CHANEL, true).get(0);
-        channelCurQueue = guild.getTextChannelsByName(CURRENT_QUEUE_CHANEL, true).get(0);
-        channelOther = guild.getTextChannelsByName(OTHER_CHANEL, true).get(0);
 
-        auk = guild.getRolesByName(aukRoleNameRoleName, false).get(0);
+        channelCurQueue = guild.getTextChannelsByName(CURRENT_QUEUE_CHANEL, true).get(0);
+
+        updateWishListItems(guild);
+
+        int flag = 0;
 
         while (true) {
-            Long currentTime = new Date().getTime();
+            long currentTime = new Date().getTime();
             currentRegistrationQueue.removeIf(queueItem -> queueItem.getLiveAt() * 1000 < currentTime);
 
             String queueJSON = check();
@@ -71,7 +58,9 @@ public class QueueChecker {
                     }
                 }
                 if (isNew) {
-                    checkNeededItems(newQueueItem);
+                    wishListItems.forEach(wishListItem -> {
+                        wishListItem.checkNeededItems(newQueueItem, guild);
+                    });
                     currentRegistrationQueue.add(newQueueItem);
                 }
             }
@@ -81,13 +70,33 @@ public class QueueChecker {
             for (Message m : mess) {
                 m.delete().queue();
             }
+
             for (QueueItem queueItem : currentRegistrationQueue) {
                 MessageEmbed curItem = createMessage(queueItem);
                 channelCurQueue.sendMessageEmbeds(curItem).submit();
             }
+            channelCurQueue.sendMessage("Current wish list size: " + wishListItems.size()).submit();
 
+            if (flag % 5 == 0) {
+                updateWishListItems(guild);
+            }
+            flag++;
             TimeUnit.MINUTES.sleep(1);
         }
+    }
+
+    private void updateWishListItems(Guild guild) {
+        TextChannel wishListChannel = guild.getTextChannelsByName(JSON_CHANEL, true).get(0);
+        MessageHistory historyWish = MessageHistory.getHistoryFromBeginning(wishListChannel).complete();
+        List<Message> messages = historyWish.getRetrievedHistory();
+        String wishJSON = "[";
+        for (Message m : messages) {
+            wishJSON += m.getContentDisplay() + ",";
+        }
+        wishJSON = wishJSON.substring(0, wishJSON.length() - 1) + "]";
+        List<WishListItem>  newWishList = mapToWishList(wishJSON);
+
+        wishListItems =newWishList;
     }
 
     private String check() {
@@ -125,98 +134,22 @@ public class QueueChecker {
         return queueItems;
     }
 
-    private void checkNeededItems(QueueItem queueItem) {
-        String[] bsMain = Arrays.stream(Main).map(name -> BS + name).toArray(String[]::new);
-        if (isNeeded(queueItem, bsMain, 20L)) {
-            send(channelBsMain, queueItem);
+    private List<WishListItem> mapToWishList(String json) {
+        List<WishListItem> wishListItems = new ArrayList<>();
+        if (Objects.isNull(json)) {
+            return wishListItems;
         }
 
-        String[] geMain = Arrays.stream(Main).map(name -> Godr_Ayed + name).toArray(String[]::new);
-        if (isNeeded(queueItem, geMain, 5L)) {
-            send(channelBsMain, queueItem);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            wishListItems = objectMapper.readValue(json, new TypeReference<List<WishListItem>>() {
+            });
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            System.out.println("Error with mapping. Json: " + json);
         }
-
-
-        String[] bsAwa = Arrays.stream(AWAKENING).map(name -> BS + name).toArray(String[]::new);
-        if (isNeeded(queueItem, bsAwa, 20L)) {
-            send(channelBsAwa, queueItem);
-        }
-
-        String[] geAwa = Arrays.stream(AWAKENING).map(name -> Godr_Ayed + name).toArray(String[]::new);
-        if (isNeeded(queueItem, geAwa, 5L)) {
-            send(channelBsAwa, queueItem);
-        }
-
-        if (isNeeded(queueItem, Necklaces, 5L)) {
-            send(channelOther, queueItem);
-        }
-
-
-//        //Test
-//        String[] test = {"Black Distortion Earring"};
-//        if (isNeeded(queueItem, test, 4L)) {
-//            send(channelBsAwa, queueItem);
-//        }
-//        if (isNeeded(queueItem, geMain, 4L)) {
-//            send(channelBsMain, queueItem);
-//        }
-    }
-
-    private boolean isNeeded(QueueItem queueItem, String[] names, Long subId) {
-        if (!queueItem.getSubId().equals(subId)) {
-            return false;
-        }
-        for (String name : names) {
-            if (queueItem.getName().contains(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void send(TextChannel channel, QueueItem queueItem) {
-        channel.sendMessage("<@&" + auk.getId() + ">").submit();
-        MessageEmbed itemMessage = createMessage(queueItem);
-        channel.sendMessageEmbeds(itemMessage).submit();
-    }
-
-    private MessageEmbed createMessage(QueueItem queueItem) {
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle(queueItem.getName(), null);
-
-        eb.setColor(new Color(0xFFFFF000, true));
-
-        String price = editPriceView(queueItem.getPrice());
-        SimpleDateFormat sdfDate = new SimpleDateFormat("MM-dd HH:mm:ss");
-        eb.setDescription("Price: " + price + "\n"
-                + "Live at: " + sdfDate.format(new Date(queueItem.getLiveAt() * 1000)));
-
-        eb.setFooter("Бесполезный Даня");
-
-        eb.setThumbnail(garmothAssetsUrl + queueItem.getId() + ".png");
-
-        return eb.build();
-    }
-
-    private String editPriceView(BigInteger price) {
-        StringBuilder sb = new StringBuilder();
-
-        int rank = 1;
-        while (price.compareTo(BigInteger.ONE) >= 0) {
-            BigInteger lastChar = price.mod(BigInteger.valueOf(10));
-            sb.insert(0, lastChar);
-            if (rank % 3 == 0) {
-
-                sb.insert(0, ',');
-            }
-            rank++;
-
-            price = price.divide((BigInteger.valueOf(10)));
-        }
-        if (sb.toString().startsWith(",")) {
-            return sb.substring(1);
-        }
-        return sb.toString();
+        return wishListItems;
     }
 
 
