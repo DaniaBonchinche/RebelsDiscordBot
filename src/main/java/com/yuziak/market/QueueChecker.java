@@ -5,9 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -25,8 +23,9 @@ public class QueueChecker {
     private final String urlPath = "https://api.arsha.io/v2/ru/GetWorldMarketWaitList";
     private final String garmothAssetsUrl = "https://assets.garmoth.com/items/";
     private List<QueueItem> currentRegistrationQueue = new ArrayList<>();
-    final String BLACKSTAR_MAIN_CHANELL = "бс-меин-аук";
-    final String BLACKSTAR_AWA_CHANELL = "бс-пробуда-аук";
+    final String BLACKSTAR_MAIN_CHANEL = "бс-меин-аук";
+    final String BLACKSTAR_AWA_CHANEL = "бс-пробуда-аук";
+    final String CURRENT_QUEUE_CHANEL = "текущие-лот";
     final String guildName = "ФПСеры";
     final String aukRoleNameRoleName = "Аук";
     final static String BS = "Blackstar ";
@@ -38,6 +37,7 @@ public class QueueChecker {
     final static String[] Main = {"Longsword", "Longbow", "Amulet", "Axe", "Shortsword", "Blade", "Staff", "Kriegsmesser", "Gauntlet", "Crescent Pendulum",
             "Crossbow", "Florang", "Battle Axe", "Shamshir", "Morning Star", "Kyve", "Serenaca", "Slayer"};
 
+    TextChannel channelCurQueue;
     TextChannel channelBsMain;
     TextChannel channelBsAwa;
     Role auk;
@@ -45,13 +45,13 @@ public class QueueChecker {
     public void start(JDA bot) throws InterruptedException {
 
         Guild guild = bot.getGuildsByName(guildName, false).get(0);
-        channelBsMain = guild.getTextChannelsByName(BLACKSTAR_MAIN_CHANELL, true).get(0);
-        channelBsAwa = guild.getTextChannelsByName(BLACKSTAR_AWA_CHANELL, true).get(0);
+        channelBsMain = guild.getTextChannelsByName(BLACKSTAR_MAIN_CHANEL, true).get(0);
+        channelBsAwa = guild.getTextChannelsByName(BLACKSTAR_AWA_CHANEL, true).get(0);
+        channelCurQueue = guild.getTextChannelsByName(CURRENT_QUEUE_CHANEL, true).get(0);
+
         auk = guild.getRolesByName(aukRoleNameRoleName, false).get(0);
 
         while (true) {
-            TimeUnit.MINUTES.sleep(1);
-
             Long currentTime = new Date().getTime();
             currentRegistrationQueue.removeIf(queueItem -> queueItem.getLiveAt() < currentTime);
 
@@ -71,6 +71,17 @@ public class QueueChecker {
                 }
             }
 
+            MessageHistory history = MessageHistory.getHistoryFromBeginning(channelCurQueue).complete();
+            List<Message> mess = history.getRetrievedHistory();
+            for (Message m : mess) {
+                m.delete().queue();
+            }
+            for (QueueItem queueItem : currentRegistrationQueue) {
+                MessageEmbed curItem = createMessage(queueItem);
+                channelCurQueue.sendMessageEmbeds(curItem).submit();
+            }
+
+            TimeUnit.MINUTES.sleep(1);
         }
     }
 
@@ -130,7 +141,11 @@ public class QueueChecker {
             send(channelBsAwa, queueItem);
         }
 
-
+        //Test
+        String[] test = {"Black Distortion Earring"};
+        if (isNeeded(queueItem, test, 4L)) {
+            send(channelBsAwa, queueItem);
+        }
     }
 
     private boolean isNeeded(QueueItem queueItem, String[] names, Long subId) {
@@ -148,7 +163,7 @@ public class QueueChecker {
     private void send(TextChannel channel, QueueItem queueItem) {
         channel.sendMessage("<@&" + auk.getId() + ">").submit();
         MessageEmbed itemMessage = createMessage(queueItem);
-        channel.sendMessageEmbeds(itemMessage).queue();
+        channel.sendMessageEmbeds(itemMessage).submit();
     }
 
     private MessageEmbed createMessage(QueueItem queueItem) {
