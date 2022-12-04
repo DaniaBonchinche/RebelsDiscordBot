@@ -1,5 +1,6 @@
 package com.yuziak;
 
+import com.yuziak.market.MarketSearchItem;
 import com.yuziak.market.QueueItem;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -49,5 +50,21 @@ public class MessageCreator {
             return sb.substring(1);
         }
         return sb.toString();
+    }
+
+    public static MessageEmbed createMessage(MarketSearchItem searchItem) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(searchItem.getName(), null);
+
+        eb.setColor(new Color(0xFFFFF000, true));
+
+
+        eb.setDescription("Stock: " + searchItem.getCurrentStock());
+
+        eb.setFooter("Бесполезный Даня");
+
+        eb.setThumbnail(garmothAssetsUrl + searchItem.getId() + ".png");
+
+        return eb.build();
     }
 }
