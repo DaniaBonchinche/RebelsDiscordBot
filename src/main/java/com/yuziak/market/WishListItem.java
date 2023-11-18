@@ -17,7 +17,7 @@ public class WishListItem {
     private String[] names;
     private String channel;
     private Long grade;
-    private static String aukRoleName = "Аук";
+    private static String aukRoleName = "Auction";
 
     public void checkNeededItems(QueueItem queueItem, Guild guild) {
         TextChannel channelToSend = guild.getTextChannelsByName(channel, true).get(0);

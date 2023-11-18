@@ -35,7 +35,7 @@ public class BossSchedule {
     }
 
 
-    private final static String guildName = "ФПСеры";
+    private final static String guildName = "YummyDranik";
     private final static String bossChanelName = "напоминалка";
     private final static String bossRoleName = "Босс";
     private final static String sonilRoleName = "Сонил";

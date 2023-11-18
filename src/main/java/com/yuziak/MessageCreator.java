@@ -24,7 +24,7 @@ public class MessageCreator {
         eb.setDescription("Price: " + price + "\n"
                 + "Live at: " + sdfDate.format(new Date(queueItem.getLiveAt() * 1000)));
 
-        eb.setFooter("Бесполезный Даня");
+        eb.setFooter("Данєчка");
 
         eb.setThumbnail(garmothAssetsUrl + queueItem.getId() + ".png");
 
@@ -61,7 +61,7 @@ public class MessageCreator {
 
         eb.setDescription("Stock: " + searchItem.getCurrentStock());
 
-        eb.setFooter("Бесполезный Даня");
+        eb.setFooter("Данєчка");
 
         eb.setThumbnail(garmothAssetsUrl + searchItem.getId() + ".png");
 

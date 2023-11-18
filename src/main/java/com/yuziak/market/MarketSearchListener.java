@@ -19,8 +19,8 @@ import java.util.Objects;
 
 public class MarketSearchListener extends ListenerAdapter {
 
-   private final static String requestChannelName = "запросы";
-   private final static String requestURL = "https://api.arsha.io/v2/ru/GetWorldMarketSubList?id=";
+   private final static String requestChannelName = "requests";
+   private final static String requestURL = "https://api.arsha.io/v2/eu/GetWorldMarketSubList?id=";
 
    @Override
    public void onMessageReceived(MessageReceivedEvent event) {

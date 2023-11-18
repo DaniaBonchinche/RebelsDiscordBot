@@ -23,14 +23,14 @@ import static com.yuziak.MessageCreator.createMessage;
 
 public class QueueChecker {
 
-    private final String urlPath = "https://api.arsha.io/v2/ru/GetWorldMarketWaitList";
+    private final String urlPath = "https://api.arsha.io/v2/eu/GetWorldMarketWaitList";
     private List<QueueItem> currentRegistrationQueue = new ArrayList<>();
 
     private List<WishListItem> wishListItems = new ArrayList<>();
-    final String guildName = "ФПСеры";
+    final String guildName = "YummyDranik";
 
-    final String CURRENT_QUEUE_CHANEL = "текущие-лоты";
-    final String JSON_CHANEL = "json-для-хотелок";
+    final String CURRENT_QUEUE_CHANEL = "current-lots";
+    final String JSON_CHANEL = "json-for-search";
 
     TextChannel channelCurQueue;
 
