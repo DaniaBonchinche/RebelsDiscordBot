@@ -12,7 +12,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
 
-        String token = "OTAwMDM5MTQ0OTQ2OTI5NzI0.Gwh1JD.te_xgYSajIbZ_WA-Z-wsiPFQrmXprMnrD9OJQU";
+        String token = "";
 
         final JDA bot = JDABuilder.createDefault(token).enableIntents(GatewayIntent.GUILD_MEMBERS).build();
         bot.getPresence().setActivity(Activity.watching("Anime"));

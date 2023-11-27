@@ -11,12 +11,12 @@ public class QueueItem {
 
     private String name;
     private Long id;
-    private Long subId;
+    private Long sid;
     private BigInteger price;
     private Long liveAt;
 
     public boolean isAnother(QueueItem queueItem) {
-        return !this.id.equals(queueItem.getId()) || !this.subId.equals(queueItem.getSubId()) || !this.liveAt.equals(queueItem.getLiveAt());
+        return !this.id.equals(queueItem.getId()) || !this.sid.equals(queueItem.getSid()) || !this.liveAt.equals(queueItem.getLiveAt());
     }
 }
 
