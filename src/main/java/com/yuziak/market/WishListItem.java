@@ -29,7 +29,7 @@ public class WishListItem {
     }
 
     private boolean isNeeded(QueueItem queueItem, String[] names, Long subId) {
-        if (!queueItem.getSubId().equals(subId)) {
+        if (!queueItem.getSid().equals(subId)) {
             return false;
         }
         for (String name : names) {
@@ -45,7 +45,6 @@ public class WishListItem {
         MessageEmbed itemMessage = createMessage(queueItem);
         channel.sendMessageEmbeds(itemMessage).submit();
     }
-
 
 }
 
