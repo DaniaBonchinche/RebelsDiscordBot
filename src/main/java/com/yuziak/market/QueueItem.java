@@ -16,7 +16,7 @@ public class QueueItem {
     private Long liveAt;
 
     public boolean isAnother(QueueItem queueItem) {
-        return !this.id.equals(queueItem.getId()) || !this.sid.equals(queueItem.getSid()) || !this.liveAt.equals(queueItem.getLiveAt());
+        return !this.name.equals(queueItem.getName()) || !this.sid.equals(queueItem.getSid()) || !this.liveAt.equals(queueItem.getLiveAt());
     }
 }
 
